@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=DM+Sans:wght@400;500;700&display=swap');
+
+html {
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  color: #17140F;
+  background-color: #FFFFFF;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+img, svg, picture {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Fix iOS Safari automatic zoom-in on input focus (minimum 16px font-size) */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch targets and button interaction */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+a {
+  color: #C2410C;
+}
+
+a:hover {
+  color: #9A3412;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #2563EB;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Checkout Popup Modal Animations */
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalCardSlideUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalCardSlideUpMobile {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.checkout-backdrop {
+  animation: modalBackdropFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.checkout-card {
+  animation: modalCardSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth scrollbar for checkout modal */
+.checkout-card::-webkit-scrollbar,
+.checkout-scroll-body::-webkit-scrollbar {
+  width: 6px;
+}
+.checkout-card::-webkit-scrollbar-track,
+.checkout-scroll-body::-webkit-scrollbar-track {
+  background: #FAFAF9;
+}
+.checkout-card::-webkit-scrollbar-thumb,
+.checkout-scroll-body::-webkit-scrollbar-thumb {
+  background: #D6CCC2;
+  border-radius: 999px;
+}
+.checkout-card::-webkit-scrollbar-thumb:hover,
+.checkout-scroll-body::-webkit-scrollbar-thumb:hover {
+  background: #A89F91;
+}
+
+/* Mobile Sticky Bar with safe-area padding for iPhone home indicator */
+.mobile-sticky-bar {
+  position: sticky;
+  bottom: 0;
+  background: #FFFFFF;
+  border-top: 1px solid #EFE7DF;
+  padding: 10px 16px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+}
+
+/* Horizontal scroll styling */
+.horizontal-scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 640px) {
+  /* Make the checkout modal behave as an intuitive bottom sheet on mobile */
+  .checkout-backdrop {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+
+  .checkout-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 94vh !important;
+    border-radius: 22px 22px 0 0 !important;
+    margin: 0 !important;
+    animation: modalCardSlideUpMobile 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+
+  .checkout-scroll-body {
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+    gap: 14px !important;
+  }
+
+  .form-grid-two-col {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-grid-three-col {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-cta-group {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .hero-cta-group > * {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .order-card-container {
+    padding: 20px 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .section-pad-standard {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+
+  .payment-method-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .countdown-digits {
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .payment-method-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .checkout-card {
+    max-height: 90vh !important;
+  }
+}
+
+/* Hide scrollbar for horizontally scrollable tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
