@@ -11,11 +11,10 @@ const getApiBaseUrl = () => {
   return 'https://api.ragnutrition.in';
 };
 
-// Configuration object for pricing, countdown target, and checkout WhatsApp link
+// Configuration object for pricing and checkout WhatsApp link
 const CONFIG = {
-  offerEnds: '2026-10-31T23:59:59+05:30',
   mrp: 4300,
-  price: 2580,
+  price: 4300,
   maxQty: 10,
   orderLink: 'https://wa.me/919875270200',
   get apiBaseUrl() {
@@ -140,28 +139,6 @@ export default function IgniteLandingPage() {
   // FAQ accordion state
   const [openFaqIdx, setOpenFaqIdx] = useState(0);
 
-  // Countdown timer state
-  const [timeLeft, setTimeLeft] = useState(() => calculateTimeLeft(CONFIG.offerEnds));
-
-  function calculateTimeLeft(targetIso) {
-    const totalMs = Math.max(0, new Date(targetIso).getTime() - Date.now());
-    return {
-      total: totalMs,
-      d: String(Math.floor(totalMs / 86400000)).padStart(2, '0'),
-      h: String(Math.floor((totalMs / 3600000) % 24)).padStart(2, '0'),
-      m: String(Math.floor((totalMs / 60000) % 60)).padStart(2, '0'),
-      s: String(Math.floor((totalMs / 1000) % 60)).padStart(2, '0')
-    };
-  }
-
-  // Ticking timer
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(CONFIG.offerEnds));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   // Preload transformation images
   useEffect(() => {
     STORIES.forEach((story) => {
@@ -177,12 +154,11 @@ export default function IgniteLandingPage() {
   // Price calculations
   const fmt = (n) => `₹${n.toLocaleString('en-IN')}`;
   const totalMrp = fmt(CONFIG.mrp * qty);
-  const totalSavings = fmt((CONFIG.mrp - CONFIG.price) * qty);
   const totalPayable = fmt(CONFIG.price * qty);
 
   // WhatsApp order link with dynamic cart summary
   const orderUrl = useMemo(() => {
-    const msg = `Hi, I want to order IGNITE Fat Burner (Tangy Orange) x ${qty} at the 40% OFF price of ${totalPayable}.`;
+    const msg = `Hi, I want to order IGNITE Fat Burner (Tangy Orange) x ${qty} for ${totalPayable}.`;
     return `${CONFIG.orderLink}?text=${encodeURIComponent(msg)}`;
   }, [qty, totalPayable]);
 
@@ -277,10 +253,8 @@ export default function IgniteLandingPage() {
       `=== IGNITE DIRECT ORDER [${orderRef}] ===`,
       `Product: IGNITE Fat Burner (Tangy Orange · 250 g jar)`,
       `Quantity: ${qty} jar(s)`,
-      `Price per jar: ₹${CONFIG.price.toLocaleString('en-IN')} (40% OFF Launch Offer)`,
-      `Total MRP: ${totalMrp}`,
-      `Total Discount: - ${totalSavings}`,
-      `Total Payable: ${totalPayable}`,
+      `Price per jar: ₹${CONFIG.price.toLocaleString('en-IN')}`,
+      `Total Amount: ${totalPayable}`,
       `Payment Method: ${orderForm.paymentMethod}`,
       ``,
       `--- CUSTOMER & SHIPPING DETAILS ---`,
@@ -312,7 +286,7 @@ export default function IgniteLandingPage() {
         quantity: qty,
         unit_price: CONFIG.price,
         total_mrp: CONFIG.mrp * qty,
-        discount: (CONFIG.mrp - CONFIG.price) * qty,
+        discount: 0,
         total_amount: numericPayable,
         payment_method: orderForm.paymentMethod,
         full_name: trimmedName,
@@ -422,9 +396,7 @@ export default function IgniteLandingPage() {
             `Razorpay Order ID: ${paidOrderId}`,
             `Product: IGNITE Fat Burner (Tangy Orange · 250 g jar)`,
             `Quantity: ${qty} jar(s)`,
-            `Price per jar: ₹${CONFIG.price.toLocaleString('en-IN')} (40% OFF Launch Offer)`,
-            `Total MRP: ${totalMrp}`,
-            `Total Discount: - ${totalSavings}`,
+            `Price per jar: ₹${CONFIG.price.toLocaleString('en-IN')}`,
             `Total Paid: ${totalPayable}`,
             `Payment Method: Prepaid (UPI / Card / NetBanking)`,
             ``,
@@ -457,7 +429,7 @@ export default function IgniteLandingPage() {
               quantity: qty,
               unit_price: CONFIG.price,
               total_mrp: CONFIG.mrp * qty,
-              discount: (CONFIG.mrp - CONFIG.price) * qty,
+              discount: 0,
               total_amount: numericPayable,
               payment_method: 'Prepaid (UPI / Card)',
               payment_status: 'PAID',
@@ -558,11 +530,6 @@ export default function IgniteLandingPage() {
   return (
     <div style={{ fontFamily: "'DM Sans', system-ui, sans-serif", color: '#17140F', background: '#FFFFFF', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
-      {/* Top Offer Strip */}
-      <div style={{ background: '#17140F', color: '#FFFFFF', textAlign: 'center', padding: '10px 16px', fontSize: '14px', fontWeight: 500, letterSpacing: '0.02em' }}>
-        <span style={{ color: '#FDBA74', fontWeight: 700 }}>FIRST-EVER LAUNCH OFFER</span> · 40% OFF · Ends in {timeLeft.d}d {timeLeft.h}h {timeLeft.m}m
-      </div>
-
       {/* Header */}
       <header style={{ borderBottom: '1px solid #EFE7DF', padding: '12px 16px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -591,7 +558,7 @@ export default function IgniteLandingPage() {
               alignItems: 'center'
             }}
           >
-            Get 40% OFF
+            Order Now
           </button>
         </div>
       </header>
@@ -599,7 +566,7 @@ export default function IgniteLandingPage() {
       {/* HERO SECTION */}
       <section style={{ background: '#FFF6EF', padding: '36px 20px 48px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: 36, alignItems: 'center' }}>
-          
+
           <div style={{ flex: '1 1 360px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 18 }}>
             <span style={{ alignSelf: 'flex-start', background: '#17140F', color: '#FDBA74', fontSize: 13, fontWeight: 700, padding: '8px 14px', borderRadius: 999, letterSpacing: '0.06em' }}>
               INDIA’S SCIENCE-FIRST FAT BURNER DRINK
@@ -632,13 +599,10 @@ export default function IgniteLandingPage() {
             </div>
 
             {/* Pricing Callout */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: 14, marginTop: 4 }}>
-              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 46, lineHeight: 1 }}>₹2,580</span>
-              <span style={{ fontSize: 20, color: '#6B6157', textDecoration: 'line-through', textDecorationColor: '#DC2626', textDecorationThickness: 3, paddingBottom: 4 }}>
-                MRP ₹4,300
-              </span>
-              <span style={{ background: '#17140F', color: '#FDBA74', fontWeight: 700, fontSize: 14, padding: '6px 10px', borderRadius: 8, marginBottom: 4 }}>
-                First-ever 40% OFF · Save ₹1,720
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: 14, marginTop: 4 }}>
+              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 46, lineHeight: 1 }}>₹4,300</span>
+              <span style={{ fontSize: 16, color: '#6B6157', fontWeight: 600 }}>
+                (Official Price · 250 g jar · Free Express Delivery)
               </span>
             </div>
 
@@ -663,7 +627,7 @@ export default function IgniteLandingPage() {
                   gap: 10
                 }}
               >
-                Claim 40% OFF now
+                Order IGNITE now
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
@@ -705,6 +669,7 @@ export default function IgniteLandingPage() {
                 boxShadow: '0 24px 60px rgba(120, 50, 10, 0.18)'
               }}
             />
+            {/* Floating Quality Badge */}
             <div
               style={{
                 position: 'absolute',
@@ -724,65 +689,40 @@ export default function IgniteLandingPage() {
                 textAlign: 'center'
               }}
             >
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em' }}>FIRST EVER</span>
-              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 30, lineHeight: 1 }}>40%</span>
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em' }}>OFF</span>
+              <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em' }}>ORIGINAL</span>
+              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 18, lineHeight: 1.1 }}>FORMULA</span>
+              <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.08em' }}>250G JAR</span>
             </div>
           </div>
 
         </div>
       </section>
 
-      {/* LAUNCH OFFER COUNTDOWN */}
+      {/* DIRECT FROM MANUFACTURER SECTION */}
       <section style={{ background: '#17140F', color: '#FFFFFF', padding: '36px 20px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto', display: 'flex', flexWrap: 'wrap', gap: '24px 36px', alignItems: 'center', justifyContent: 'space-between' }}>
-          
+
           <div style={{ flex: '1 1 340px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
             <span style={{ alignSelf: 'flex-start', background: '#FDBA74', color: '#17140F', fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', padding: '6px 12px', borderRadius: 999 }}>
-              FIRST-EVER LAUNCH OFFER
+              DIRECT FROM MANUFACTURER
             </span>
             <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 'clamp(30px, 5vw, 48px)', lineHeight: 1.02, letterSpacing: '-0.02em' }}>
-              We’ve never offered this before.<br />
-              <span style={{ color: '#FB923C' }}>Don’t miss it.</span>
+              Authentic IGNITE.<br />
+              <span style={{ color: '#FB923C' }}>Delivered to your doorstep.</span>
             </span>
             <span style={{ fontSize: 16, lineHeight: 1.5, color: '#D6CCC2' }}>
-              Launch price for our first customers only. Once the offer window closes, IGNITE goes back to full MRP.
+              Manufactured at our licensed facility under strict GMP &amp; ISO standards. Every jar is backed by 100% batch transparency and genuine formulation.
             </span>
           </div>
 
-          <div style={{ flex: '1 1 320px', minWidth: 0, background: '#FFFFFF', color: '#17140F', borderRadius: 22, padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 18, color: '#6B6157', textDecoration: 'line-through', textDecorationColor: '#DC2626', textDecorationThickness: 3 }}>
+          <div style={{ flex: '1 1 320px', minWidth: 0, background: '#FFFFFF', color: '#17140F', borderRadius: 22, padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <span style={{ fontSize: 13, color: '#6B6157', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Official Price</span>
+              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 44, lineHeight: 1, color: '#C2410C' }}>
                 ₹4,300
               </span>
-              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 44, lineHeight: 1, color: '#C2410C' }}>
-                ₹2,580
-              </span>
+              <span style={{ fontSize: 13, color: '#15803D', fontWeight: 700 }}>✓ Free Express Shipping across India</span>
             </div>
-
-            {timeLeft.total > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', color: '#9A3412' }}>OFFER ENDS IN</span>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 8, textAlign: 'center' }}>
-                  <div style={{ background: '#17140F', color: '#FFFFFF', borderRadius: 12, padding: '10px 4px', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 26, lineHeight: 1 }}>{timeLeft.d}</span>
-                    <span style={{ fontSize: 11, color: '#D6CCC2' }}>DAYS</span>
-                  </div>
-                  <div style={{ background: '#17140F', color: '#FFFFFF', borderRadius: 12, padding: '10px 4px', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 26, lineHeight: 1 }}>{timeLeft.h}</span>
-                    <span style={{ fontSize: 11, color: '#D6CCC2' }}>HRS</span>
-                  </div>
-                  <div style={{ background: '#17140F', color: '#FFFFFF', borderRadius: 12, padding: '10px 4px', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 26, lineHeight: 1 }}>{timeLeft.m}</span>
-                    <span style={{ fontSize: 11, color: '#D6CCC2' }}>MINS</span>
-                  </div>
-                  <div style={{ background: '#C2410C', color: '#FFFFFF', borderRadius: 12, padding: '10px 4px', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 26, lineHeight: 1 }}>{timeLeft.s}</span>
-                    <span style={{ fontSize: 11, color: '#FFEDD5' }}>SECS</span>
-                  </div>
-                </div>
-              </div>
-            )}
 
             <button
               type="button"
@@ -800,10 +740,11 @@ export default function IgniteLandingPage() {
                 boxSizing: 'border-box',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                gap: 8
               }}
             >
-              Lock in my launch price
+              Order Now — Express Checkout
             </button>
           </div>
 
@@ -817,7 +758,7 @@ export default function IgniteLandingPage() {
             CERTIFIED · LICENSED · MADE FOR INDIA &amp; THE WORLD
           </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: '14px 22px' }}>
-            
+
             {/* GMP Badge */}
             <svg width="76" height="76" viewBox="0 0 100 100" role="img" aria-label="GMP certified">
               <circle cx="50" cy="50" r="47" fill="#FFFFFF" stroke="#15803D" strokeWidth="4" />
@@ -918,7 +859,7 @@ export default function IgniteLandingPage() {
       {/* HOW IT WORKS: 4 MECHANISMS */}
       <section style={{ padding: '24px 20px 64px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
-          
+
           {/* Step 1 */}
           <div style={{ border: '1px solid #EFE7DF', borderRadius: 20, padding: 24, display: 'flex', flexDirection: 'column', gap: 12, background: '#FFFFFF' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -1090,7 +1031,7 @@ export default function IgniteLandingPage() {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28, alignItems: 'center' }}>
-            
+
             {/* Before / After Image Box with interactive clip-path */}
             <div style={{ flex: '1 1 320px', minWidth: 0, maxWidth: 460, display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{ position: 'relative', width: '100%', aspectRatio: '3 / 4', borderRadius: 24, overflow: 'hidden', background: '#EFE7DF' }}>
@@ -1194,7 +1135,7 @@ export default function IgniteLandingPage() {
                   alignItems: 'center'
                 }}
               >
-                Start your journey — 40% OFF
+                Start your journey — Order IGNITE
               </button>
             </div>
 
@@ -1205,7 +1146,7 @@ export default function IgniteLandingPage() {
       {/* HOW TO USE */}
       <section style={{ padding: '64px 20px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto', display: 'flex', flexWrap: 'wrap-reverse', gap: 36, alignItems: 'center' }}>
-          
+
           <div style={{ flex: '1 1 380px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
             <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.14em', color: '#C2410C' }}>HOW TO USE</span>
             <h2 style={{ margin: 0, fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 'clamp(30px, 4.6vw, 46px)', lineHeight: 1.05, letterSpacing: '-0.02em' }}>
@@ -1283,7 +1224,7 @@ export default function IgniteLandingPage() {
       {/* WHO IT'S FOR / WHO IT'S NOT FOR */}
       <section style={{ padding: '64px 20px' }}>
         <div style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
-          
+
           <div style={{ borderRadius: 20, padding: 28, background: '#17140F', color: '#FFFFFF', display: 'flex', flexDirection: 'column', gap: 14 }}>
             <h3 style={{ margin: 0, fontFamily: 'Archivo, sans-serif', fontWeight: 800, fontSize: 24 }}>IGNITE is for adults who</h3>
             <span style={{ fontSize: 16, lineHeight: 1.5, color: '#E7DFD7' }}>· Are following a calorie-controlled diet</span>
@@ -1306,7 +1247,7 @@ export default function IgniteLandingPage() {
       {/* ORDER SECTION / CART & CALCULATOR */}
       <section id="order" className="section-pad-standard" style={{ background: '#FFF6EF', padding: '64px 20px' }}>
         <div className="order-card-container" style={{ maxWidth: 560, margin: '0 auto', background: '#FFFFFF', borderRadius: 28, padding: '28px 24px', boxShadow: '0 24px 60px rgba(120, 50, 10, 0.14)', display: 'flex', flexDirection: 'column', gap: 20 }}>
-          
+
           <img
             src="/images/product-drink.jpg"
             alt="IGNITE jar with a glass of tangy orange drink"
@@ -1322,17 +1263,14 @@ export default function IgniteLandingPage() {
                 Tangy Orange · 250 g jar
               </span>
             </span>
-            <span style={{ background: '#C2410C', color: '#FFFFFF', fontWeight: 800, fontSize: 15, padding: '8px 12px', borderRadius: 10 }}>
-              40% OFF
+            <span style={{ background: '#17140F', color: '#FDBA74', fontWeight: 800, fontSize: 13, padding: '6px 12px', borderRadius: 8 }}>
+              OFFICIAL STORE
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
-            <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 48, lineHeight: 1 }}>₹2,580</span>
-            <span style={{ fontSize: 20, color: '#6B6157', textDecoration: 'line-through', textDecorationColor: '#DC2626', textDecorationThickness: 3, paddingBottom: 6 }}>
-              MRP ₹4,300
-            </span>
-            <span style={{ fontSize: 15, color: '#9A3412', fontWeight: 700, paddingBottom: 6 }}>per jar</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+            <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 48, lineHeight: 1 }}>₹4,300</span>
+            <span style={{ fontSize: 15, color: '#6B6157', fontWeight: 700 }}>per jar (MRP)</span>
           </div>
 
           {/* Interactive Quantity Selector */}
@@ -1384,20 +1322,16 @@ export default function IgniteLandingPage() {
           {/* Cart Breakdown */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 15 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#4A4238' }}>MRP</span>
-              <span style={{ textDecoration: 'line-through', color: '#6B6157' }}>{totalMrp}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ color: '#4A4238' }}>40% discount</span>
-              <span style={{ color: '#9A3412', fontWeight: 700 }}>− {totalSavings}</span>
+              <span style={{ color: '#4A4238' }}>Price ({qty} jar{qty > 1 ? 's' : ''})</span>
+              <span style={{ fontWeight: 700, color: '#17140F' }}>{totalPayable}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: '#4A4238' }}>Delivery</span>
-              <span style={{ color: '#4A4238' }}>Calculated at checkout, if applicable</span>
+              <span style={{ color: '#15803D', fontWeight: 700 }}>FREE</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed #E5D9CE', paddingTop: 12, fontSize: 19, fontWeight: 700 }}>
-              <span>You pay</span>
-              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900 }}>{totalPayable}</span>
+              <span>Total Payable</span>
+              <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, color: '#C2410C' }}>{totalPayable}</span>
             </div>
           </div>
 
@@ -1547,13 +1481,10 @@ export default function IgniteLandingPage() {
         <div style={{ maxWidth: 1120, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
             <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 22 }}>
-              ₹2,580{' '}
-              <span style={{ fontSize: 14, fontWeight: 500, color: '#6B6157', textDecoration: 'line-through', fontFamily: "'DM Sans', sans-serif" }}>
-                ₹4,300
-              </span>
+              ₹4,300 <span style={{ fontSize: 13, fontWeight: 500, color: '#6B6157', fontFamily: "'DM Sans', sans-serif" }}>/ jar</span>
             </span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#9A3412' }}>
-              Launch offer ends in {timeLeft.d}d {timeLeft.h}h {timeLeft.m}m
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#15803D' }}>
+              Free Express Shipping
             </span>
           </div>
           <button
@@ -1585,7 +1516,7 @@ export default function IgniteLandingPage() {
       </div>
 
       {/* =========================================================================
-          CHECKOUT POPUP MODAL (Triggered on "Buy Now" / "Claim 40% OFF")
+          CHECKOUT POPUP MODAL (Triggered on "Buy Now" / "Order Now")
           ========================================================================= */}
       {isCheckoutOpen && (
         <div
@@ -1751,8 +1682,8 @@ export default function IgniteLandingPage() {
                     <span style={{ fontFamily: 'Archivo, sans-serif', fontWeight: 900, fontSize: 20, color: '#C2410C', display: 'block', lineHeight: 1.1 }}>
                       {totalPayable}
                     </span>
-                    <span style={{ fontSize: 11, color: '#6B6157', textDecoration: 'line-through' }}>
-                      {totalMrp}
+                    <span style={{ fontSize: 11, color: '#6B6157' }}>
+                      ₹4,300 × {qty}
                     </span>
                   </div>
                 </div>
@@ -1878,7 +1809,7 @@ export default function IgniteLandingPage() {
               ) : (
                 /* The Checkout Form (matching user's screenshot) */
                 <form onSubmit={handleOrderSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  
+
                   {/* Title & "You pay" strip */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8, borderBottom: '1px solid #EFE7DF', paddingBottom: 10 }}>
                     <div>

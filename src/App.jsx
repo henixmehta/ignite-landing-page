@@ -84,7 +84,7 @@ class ErrorBoundary extends Component {
                 Reload Page
               </button>
               <a
-                href="https://wa.me/919875270200?text=Hi%2C%20I%20want%20to%20order%20IGNITE%20Fat%20Burner%20at%2040%25%20OFF."
+                href="https://wa.me/919875270200?text=Hi%2C%20I%20want%20to%20order%20IGNITE%20Fat%20Burner."
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
